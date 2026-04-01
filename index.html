@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Учим языки</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  background: #e6f7ff;
+}
+
+h1 {
+  font-size: 40px;
+}
+
+.menu button, .answers button {
+  font-size: 20px;
+  padding: 15px;
+  margin: 10px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+.word {
+  font-size: 70px;
+  margin: 20px;
+}
+
+#score {
+  font-size: 25px;
+  margin-top: 10px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>🎮 Учим слова</h1>
+
+<div class="menu" id="menu">
+  <h2>Выбери категорию</h2>
+  <button onclick="startGame('fruits')">🍎 Фрукты</button>
+  <button onclick="startGame('animals')">🐶 Животные</button>
+  <button onclick="startGame('colors')">🎨 Цвета</button>
+  <button onclick="startGame('body')">👁 Части тела</button>
+  <button onclick="startGame('furniture')">🪑 Мебель</button>
+</div>
+
+<div id="game" style="display:none;">
+  <div class="word" id="emoji"></div>
+  <button onclick="speak()">🔊 Слушать</button>
+
+  <div class="answers" id="answers"></div>
+
+  <div id="score">Очки: 0</div>
+  <button onclick="backMenu()">⬅ Назад</button>
+</div>
+
+<script>
+
+let score = 0;
+let currentWord;
+
+let data = {
+  fruits: [
+    {e:"🍎", en:"Apple", ru:"Яблоко"},
+    {e:"🍌", en:"Banana", ru:"Банан"},
+    {e:"🍇", en:"Grapes", ru:"Виноград"}
+    {e:"🍋", en:"Lemon", ru:"Лимон"},
+    {e:"🍅", en:"Tomato", ru:"Помидор"},
+    {e:"🍉", en:"Watermelon", ru:"Арбуз"}, 
+    {e:"🍓", en:"Strawberry ", ru:"Клубника"},
+    {e:"🫐", en:"Blueberry", ru:"Голубика"}
+  ],
+  animals: [
+    {e:"🐶", en:"Dog", ru:"Собака"},
+    {e:"🐱", en:"Cat", ru:"Кошка"},
+    {e:"🐮", en:"Cow", ru:"Корова"}
+    {e:"🐻 ", en:"Bear", ru:"Медьведь "},
+    {e:"🐯 ", en:"Tiger", ru:"Тигр"},
+    {e:"🦊 ", en:"Fox", ru:"Лиса"}
+    ],
+  colors: [
+    {e:"🔴", en:"Red", ru:"Красный"},
+    {e:"🔵", en:"Blue", ru:"Синий"},
+    {e:"🟢", en:"Green", ru:"Зелёный"}
+    {e:"⚪"  en:"White", ru:"Белый"}, 
+    {e:"🟠", en:"Orange", ru:"Оранжевый"},
+    {e:"🟤", en:"Brown", ru:"Коричневый"}
+  ],
+  body: [
+    {e:"👁", en:"Eye", ru:"Глаз"},
+    {e:"👂", en:"Ear", ru:"Ухо"},
+    {e:"🖐", en:"Hand", ru:"Рука"}
+    {e:"👄", en:"lip", ru:"Губы"},
+    {e:"👃", en:"Nose", ru:"Нос"},
+    {e:"🦷", en:"Teeth", ru:"Зубы"}
+  ],
+  furniture: [
+    {e:"🪑", en:"Chair", ru:"Стул"},
+    {e:"🛏", en:"Bed", ru:"Кровать"},
+    {e:"🛋", en:"Sofa", ru:"Диван"}
+    {e:"🪟", en:"Window", ru:"Окно"},
+    {e:"🪞", en:"Mirror", ru:"Зеркало"},
+    {e:"🚪", en:"Door", ru:"Дверь"}
+  ]
+};
+
+function startGame(category){
+  document.getElementById("menu").style.display="none";
+  document.getElementById("game").style.display="block";
+  next(category);
+}
+
+function next(category){
+  let list = data[category];
+  currentWord = list[Math.floor(Math.random()*list.length)];
+
+  document.getElementById("emoji").innerHTML = currentWord.e;
+
+  let answers = [...list]
+    .sort(()=>0.5-Math.random())
+    .slice(0,3);
+
+  if(!answers.includes(currentWord)){
+    answers[0] = currentWord;
+  }
+
+  let html = "";
+  answers.forEach(a=>{
+    html += `<button onclick="check('${a.en}')">${a.en}</button>`;
+  });
+
+  document.getElementById("answers").innerHTML = html;
+
+  window.currentCategory = category;
+}
+
+function check(answer){
+  if(answer === currentWord.en){
+    score++;
+    alert("✅ Правильно!");
+  } else {
+    alert("❌ Попробуй ещё!");
+  }
+
+  document.getElementById("score").innerText = "Очки: " + score;
+  next(window.currentCategory);
+}
+
+function speak(){
+  let text = currentWord.en + " - " + currentWord.ru;
+  let speech = new SpeechSynthesisUtterance(text);
+  speech.lang = "en-US";
+  speechSynthesis.speak(speech);
+}
+
+function backMenu(){
+  document.getElementById("menu").style.display="block";
+  document.getElementById("game").style.display="none";
+}
+
+</script>
+
+</body>
+</html>
